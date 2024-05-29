@@ -11,7 +11,7 @@ This repository is organized by semester, each containing folders for the respec
 - **Calculus II**: Lecture notes and exam preparation materials.
 - **Data Structures and Algorithm**: Labs and notes.
 
-### 3rd Semester - Fall 2023
+### [3rd Semester - Fall 2023](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023)
 - **Digital Logic Design**: Cheat sheets and project.
 - **Object Oriented Programming**: Cheat sheets, labs, notes and practice materials.
 - **Engineering Maths**: Notes, practice materials, project and revision cheat sheet.
