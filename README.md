@@ -6,7 +6,7 @@ Welcome to the Study Stack repository! This repository is dedicated to organizin
 
 This repository is organized by semester, each containing folders for the respective courses. Here's an overview of the repository structure:
 
-### 2nd Semester - Spring 2023
+### [2nd Semester - Spring 2023](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202023)
 - **Discrete Maths**: Cheat sheets and practice materials.
 - **Calculus II**: Lecture notes and exam preparation materials.
 - **Data Structures and Algorithm**: Labs and notes.
@@ -18,7 +18,7 @@ This repository is organized by semester, each containing folders for the respec
 - **Database Systems**: Cheat sheets, homeworks, notes and practice materials.
 - **Pakistan and Modern South Asia (PAMSA)**: Reading notes, article ntoes, quizzes and lecture notes.
 
-### 4th Semester - Spring 2024
+### [4th Semester - Spring 2024](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024)
 - **Data Structures II**: Cheat sheets, notes and practice materials.
 - **Linear Algebra**: Cheat sheets, notes, practice materials and some proofs.
 - **Probability and Statistics**: Cheat sheets, notes, practice materials and programming assignments.
