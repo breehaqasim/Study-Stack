@@ -7,20 +7,20 @@ Welcome to the Study Stack repository! This repository is dedicated to organizin
 This repository is organized by semester, each containing folders for the respective courses. Here's an overview of the repository structure:
 
 ### [2nd Semester - Spring 2023](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202023)
-- **Discrete Maths**: Cheat sheets and practice materials.
-- **Calculus II**: Lecture notes and exam preparation materials.
-- **Data Structures and Algorithm**: Labs and notes.
+- [**Discrete Maths**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202023/DM): Cheat sheets and practice materials.
+- [**Calculus II**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202023/Calculus%20II): Lecture notes and exam preparation materials.
+- [**Data Structures and Algorithm**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202023/DSA): Labs and notes.
 
 ### [3rd Semester - Fall 2023](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023)
-- **Digital Logic Design**: Cheat sheets and project.
-- **Object Oriented Programming**: Cheat sheets, labs, notes and practice materials.
-- **Engineering Maths**: Notes, practice materials, project and revision cheat sheet.
+- [**Digital Logic Design**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/DLD): Cheat sheets and project.
+- [**Object Oriented Programming**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/OOP): Cheat sheets, labs, notes and practice materials.
+- [**Engineering Maths**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/EM): Notes, practice materials, project and revision cheat sheet.
 - [**Database Systems**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/DB): Cheat sheets, homeworks, notes and practice materials.
-- **Pakistan and Modern South Asia (PAMSA)**: Reading notes, article ntoes, quizzes and lecture notes.
+- [**Pakistan and Modern South Asia (PAMSA)**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/PAMSA): Reading notes, article ntoes, quizzes and lecture notes.
 
 ### [4th Semester - Spring 2024](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024)
-- **Data Structures II**: Cheat sheets, notes and practice materials.
-- **Linear Algebra**: Cheat sheets, notes, practice materials and some proofs.
-- **Probability and Statistics**: Cheat sheets, notes, practice materials and programming assignments.
-- **Computer Architecture**: Homeworks, labs and practice materials.
+- [**Data Structures II**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/DS2): Cheat sheets, notes and practice materials.
+- [**Linear Algebra**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/LA): Cheat sheets, notes, practice materials and some proofs.
+- [**Probability and Statistics**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/PNS): Cheat sheets, notes, practice materials and programming assignments.
+- [**Computer Architecture**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/CA): Homeworks, labs and practice materials.
 
