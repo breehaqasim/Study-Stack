@@ -1,6 +1,6 @@
 # Study Stack
 
-Welcome to the Study Stack repository! This repository is a collection of resources, notes, assignments, and study materials gathered over various semesters during my university studies. The purpose of this repository is to organize my academic materials in one place and to serve as a reference for future studies or for anyone interested in these topics.
+Welcome to the Study Stack repository! This repository is dedicated to organizing and sharing resources, notes, assignments, and study materials collected throughout my pursuit of a Computer Science degree. It's designed to serve both as a personal academic archive and as a resource for other students or individuals interested in the field of computer science.
 
 ## Repository Structure
 
