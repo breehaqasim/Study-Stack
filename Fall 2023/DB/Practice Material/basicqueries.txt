@@ -1,0 +1,129 @@
+1.
+
+select * from worker
+
+2.
+
+select Dept_Name, count(WORKER_ID) from Department
+inner join Worker on Worker.DEPT_ID = Department.ID
+group by Department.Dept_Name
+
+3.
+
+select First_Name, Last_Name, Title, Affected_From
+from Worker inner join
+Title on Title.WORKER_REF_ID = WORKER.WORKER_ID inner join Designation on Designation.ID = Title.DESIGNATION_ID  where Last_Name = 'Zain' order by Affected_From desc
+
+4.
+
+select DEPT_NAME, sum(SALARY) from Worker inner join Department on Department.ID = Worker.DEPT_ID WHERE
+DEPT_NAME = 'Admin' GROUP by DEPT_NAME
+
+5.
+
+select FIRST_NAME, LAST_NAME, SALARY,
+case when DEPT_ID is null then  'No Department'
+else Department.DEPT_NAME
+end as DEPT_NAME from Worker left join Department
+on Department.ID = Worker.DEPT_ID
+
+6.
+
+
+select First_Name, Last_Name, CONVERT(DATE, JOINING_DATE), DATEDIFF(YEAR, JOINING_DATE, GETDATE())-1 from Worker;
+
+
+7.
+
+
+select WORKER_ID, FIRST_NAME, LAST_NAME, JOINING_DATE
+from worker where DEPT_ID is null
+
+
+8.
+
+
+select DEPT_NAME, Max(SALARY) from Department inner join
+Worker on Department.ID = Worker.DEPT_ID group BY
+DEPT_NAME
+
+9.
+
+
+select w.first_name,w.last_name,d.title,t.affected_from
+from worker w inner join title t on w.worker_id=t.worker_ref_id inner join designation d on t.designation_id=d.id
+where t.affected_from = (
+    select max(affected_from)
+    from title t2
+    where t2.worker_ref_id = t.worker_ref_id
+)
+order by w.first_name desc
+
+10.
+
+
+select DEPT_NAME from Department left JOIN
+Worker on Worker.DEPT_ID = Department.ID
+where DEPT_ID is null;
+
+
+11.
+
+
+
+select distinct w.First_Name, w.Last_Name, CONVERT(DATE, w.JOINING_DATE) from Worker as w inner join Worker as w2 on w.Worker_ID != w2.worker_ID  where YEAR(w.JOINING_DATE) = YEAR(w2.JOINING_DATE) and MONTH(w.JOINING_DATE) = MONTH(w2.JOINING_DATE) and DAY(w.JOINING_DATE) = DAY(w2.JOINING_DATE)
+
+
+12.
+
+
+select FIRST_NAME, LAST_NAME, JOINING_DATE
+from Worker where WORKER_ID not in (select WORKER_REF_ID from Bonus) order by FIRST_NAME ASC
+
+13.
+
+select First_Name, Last_Name, DEPT_NAME, Salary
+from Worker inner join Department on Department.ID = Worker.DEPT_ID where Salary > (select Avg(w2.Salary) from Worker w2 where w2.DEPT_ID = Worker.DEPT_ID)
+
+14.
+
+
+select First_Name, Last_Name,
+sum (case when BONUS_AMOUNT is null then 0
+else BONUS_AMOUNT
+end) as BONUS_AMOUNT
+from
+Worker left join Bonus on Bonus.WORKER_REF_ID = Worker.WORKER_ID GROUP by First_NAME, LAST_NA
+
+15.
+
+select First_Name, DEPT_NAME, Year(BONUS_DATE), Count(WORKER_REF_ID)
+from Worker inner join Department on Department.ID
+= Worker.DEPT_ID inner join Bonus on Bonus.WORKER_REF_ID
+= Worker.WORKER_ID group by First_Name, DEPT_NAME, BONUS_DATE, WORKER_REF_ID having COUNT(WORKER_REF_ID) > 1;
+
+16.
+
+
+select First_Name, Last_Name, Dept_Name, Salary
+from Worker inner join Department on Department.ID
+= Worker.DEPT_ID where Salary in (SELECT MAX(SALARY) FROM Worker WHERE SALARY < (SELECT MAX(SALARY) FROM Worker));
+
+
+17.
+
+
+select First_Name, Last_Name, Dept_Name, Sum(BONUS_AMOUNT) from Bonus inner join Worker on Worker.WORKER_ID = Bonus.WORKER_REF_ID inner join Department on Department.ID = Worker.DEPT_ID where WORKER_ID IN (
+    select WORKER_REF_ID
+    from BONUS
+    where YEAR(Bonus.BONUS_DATE) = 2017
+    EXCEPT
+    select WORKER_REF_ID
+    from BONUS
+    where YEAR(Bonus.BONUS_DATE) = 2018
+    
+  ) 
+  
+  
+  group by First_Name, Last_Name, Dept_Name ;
+
