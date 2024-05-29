@@ -15,7 +15,7 @@ This repository is organized by semester, each containing folders for the respec
 - **Digital Logic Design**: Cheat sheets and project.
 - **Object Oriented Programming**: Cheat sheets, labs, notes and practice materials.
 - **Engineering Maths**: Notes, practice materials, project and revision cheat sheet.
-- **Database Systems**: Cheat sheets, homeworks, notes and practice materials.
+- **Database Systems**: {Cheat sheets, homeworks, notes and practice materials.](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202023/DB)
 - **Pakistan and Modern South Asia (PAMSA)**: Reading notes, article ntoes, quizzes and lecture notes.
 
 ### [4th Semester - Spring 2024](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024)
