@@ -24,3 +24,9 @@ This repository is organized by semester, each containing folders for the respec
 - [**Probability and Statistics**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/PNS): Cheat sheets, notes, practice materials and programming assignments.
 - [**Computer Architecture**](https://github.com/breehaqasim/Study-Stack/tree/main/Spring%202024/CA): Homeworks, labs and practice materials.
 
+### [5th Semester - Fall 2024](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024)
+- [**Operating Systems**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024/Operating%20Systems): Notes, labs and practice materials.
+- [**Nature of Computation**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024/Nature%20of%20Computation): Notes, homeworks, weekly challenges and practice materials.
+- [**Jehan-e-Urdu**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024/JEU): Notes
+
+
