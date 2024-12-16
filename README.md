@@ -29,4 +29,7 @@ This repository is organized by semester, each containing folders for the respec
 - [**Nature of Computation**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024/Nature%20of%20Computation): Notes, homeworks, weekly challenges and practice materials.
 - [**Jehan-e-Urdu**](https://github.com/breehaqasim/Study-Stack/tree/main/Fall%202024/JEU): Notes
 
+### [CS Electives](https://github.com/breehaqasim/Study-Stack/tree/main/CS%20Electives)
+- [**Data Science**](https://github.com/breehaqasim/Study-Stack/tree/main/CS%20Electives/Data%20Science): Final, midterm, notes and homeworks.
+
 
