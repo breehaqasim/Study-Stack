@@ -1,0 +1,2 @@
+- Check requirements.txt to download all dependencies
+- then run 'python sms_classifier.py'
