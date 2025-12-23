@@ -1,0 +1,42 @@
+{
+  "model_type": "bilstm",
+  "accuracy": 0.48,
+  "precision": 0.23040000000000002,
+  "recall": 0.48,
+  "f1": 0.3113513513513514,
+  "config": {
+    "model_type": "bilstm",
+    "embedding_dim": 128,
+    "hidden_dim": 64,
+    "num_layers": 2,
+    "dropout": 0.3,
+    "max_length": 150,
+    "batch_size": 16,
+    "learning_rate": 0.002,
+    "epochs": 50,
+    "min_freq": 1
+  },
+  "class_analysis": {
+    "negative": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 75
+    },
+    "positive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 3
+    },
+    "neutral": {
+      "precision": 0.48,
+      "recall": 1.0,
+      "f1": 0.6486486486486487,
+      "support": 72
+    },
+    "worst_class_f1": "N",
+    "worst_class_recall": "N",
+    "worst_class_precision": "N"
+  }
+}

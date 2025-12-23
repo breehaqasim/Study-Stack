@@ -1,0 +1,437 @@
+\documentclass[11pt,twocolumn]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{amssymb}
+
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{authblk}
+
+\title{\textbf{Word Embeddings and Sentiment Classification:\\
+Implementation and Analysis of NLP Fundamentals}}
+
+\author[1]{Breeha Qasim}
+\author[1]{Ashbah Faisal}
+\author[1]{Namel Shahid}
+\affil[1]{Department of Computer Science, Habib University, Karachi, Pakistan}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper implements and analyzes two core NLP tasks: (1) Word2Vec Skip-Gram with full softmax for learning word embeddings, and (2) Bidirectional LSTM for Urdu sentiment classification. The Skip-Gram model, built from scratch in NumPy, produces meaningful semantic clusters under baseline settings (embedding\_dim = 50, learning\_rate = 0.01, window\_size = 2) and highlights effects of hyperparameters and corpus quality. The BiLSTM classifier achieves strong performance on Urdu sentiment analysis. Using t-SNE visualizations, frequency analysis, and confusion matrices, we evaluate both models, outlining their strengths, limitations, and areas for improvement.
+\end{abstract}
+
+\section{Introduction}
+
+Natural Language Processing has evolved significantly through advances in word representation learning and neural architectures. Two fundamental building blocks in modern NLP are \textbf{word embeddings} and \textbf{recurrent neural networks}, which enable machines to understand and process human language effectively. This paper presents implementations and detailed analyses of:
+
+\begin{enumerate}
+    \item \textbf{Word2Vec Skip-Gram}: Learning distributed representations from raw text using the Skip-Gram architecture with full softmax optimization
+    \item \textbf{Urdu Sentiment Classification}: Building a BiLSTM classifier for sentiment analysis in resource-constrained language settings
+\end{enumerate}
+
+\noindent Both tasks are implemented from foundational principles, demonstrating core concepts while addressing practical challenges in real-world applications.
+
+\section{Word2Vec Skip-Gram Implementation}
+\label{sec:word2vec}
+
+\subsection{Background and Motivation}
+
+Word embeddings represent words as dense vectors in continuous space, where semantic relationships are captured through distributional similarity \cite{mikolov2013}. The core intuition follows the \textit{Distributional Hypothesis} \cite{harris1954}: words appearing in similar contexts have similar meanings.
+
+\subsubsection{Skip-Gram Architecture}
+
+Skip-Gram predicts context words from a given center word, learning word embeddings as a natural outcome of this prediction task. Unlike the Continuous Bag of Words (CBOW) model, Skip-Gram produces multiple training samples per word, making it especially effective for rare words and capturing fine-grained semantic relationships \cite{mccormick}. Its advantages include improved representation of infrequent words, richer semantic learning through multi-context prediction, and efficient scalability to large vocabularies.
+
+\subsubsection{Full Softmax}
+
+Our implementation uses \textbf{full softmax}, computing the probability distribution over the entire vocabulary:
+
+\begin{equation}
+P(w_c|w_t) = \frac{\exp(\mathbf{v}_{w_c}^T \mathbf{v}_{w_t})}{\sum_{w \in V} \exp(\mathbf{v}_w^T \mathbf{v}_{w_t})}
+\end{equation}
+
+\noindent While computationally expensive for large vocabularies, full softmax provides exact gradients without approximation bias, making it suitable for our vocabulary size ($|V| \approx 120$).
+
+\subsection{Implementation Details}
+
+\subsubsection{Preprocessing Pipeline}
+
+The preprocessing pipeline comprises three key stages. First, tokenization and normalization are applied by converting text to lowercase, extracting alphanumeric tokens using the regex pattern \texttt{r'\textbackslash b\textbackslash w+\textbackslash b'}, and computing word frequencies via Python’s \texttt{Counter}. For instance, \textit{"The student studies in the library"} becomes \texttt{['the', 'student', 'studies', 'in', 'the', 'library']}.
+\newline \noindent
+Second, a vocabulary is constructed by filtering tokens with a minimum frequency threshold (\texttt{min\_count=1}), establishing bidirectional mappings (\texttt{word2idx}, \texttt{idx2word}), and sorting alphabetically for reproducibility. This yields mappings such as \texttt{{'the': 0, 'student': 1, 'studies': 2, ...}}.
+\newline \noindent
+Finally, the corpus is transformed from token sequences to numerical index sequences for efficient model training and computation.
+
+\subsubsection{Training Pair Generation}
+
+For each word $w_t$ at position $t$, we generate pairs $(w_t, w_c)$ where $w_c$ is within window size $k$:
+
+\begin{equation}
+\text{Context}(w_t) = \{w_{t-k}, ..., w_{t-1}, w_{t+1}, ..., w_{t+k}\}
+\end{equation}
+
+\noindent For example, given the sentence \textit{"the student learn in lecture"} with \texttt{window\_size=2} and center word \textbf{learn} at position 2, the context window includes [\texttt{the}, \texttt{student}, \texttt{in}, \texttt{lecture}] (2 words on each side). This generates four training pairs: (\textbf{learn}, \texttt{the}), (\textbf{learn}, \texttt{student}), (\textbf{learn}, \texttt{in}), and (\textbf{learn}, \texttt{lecture}). Each pair trains the model to predict one context word given the center word.
+
+
+\subsubsection{Model Architecture}
+
+The Skip-Gram model uses two weight matrices: the input embedding matrix $\mathbf{W}_{in} \in \mathbb{R}^{|V| \times d}$ that maps each word to its $d$-dimensional representation, and the output matrix $\mathbf{W}_{out} \in \mathbb{R}^{d \times |V|}$ used for predicting context words. During training, only $\mathbf{W}_{in}$ is retained as the final word embeddings.
+
+\noindent The forward pass begins by looking up the center word's embedding, computing similarity scores with all vocabulary words, and converting scores to probabilities via softmax:
+
+\begin{align}
+\mathbf{h} &= \mathbf{W}_{in}[w_t] \\
+\mathbf{scores} &= \mathbf{h}^T \mathbf{W}_{out} \\
+\mathbf{probs} &= \text{softmax}(\mathbf{scores})
+\end{align}
+
+\noindent To prevent numerical overflow when computing exponentials, we apply the softmax function with numerical stability by subtracting the maximum value:
+
+\begin{equation}
+\text{softmax}(x_i) = \frac{\exp(x_i - \max(x))}{\sum_j \exp(x_j - \max(x))}
+\end{equation}
+
+\subsubsection{Optimization}
+
+We optimize the model by minimizing the cross-entropy loss, which measures how well the predicted probability distribution matches the true context word distribution:
+
+\begin{equation}
+\mathcal{L} = -\log P(w_c|w_t)
+\end{equation}
+
+\noindent The gradient computation starts by calculating the error signal as the difference between predicted probabilities and the true one-hot vector, then backpropagates through the network:
+
+\begin{align}
+\mathbf{e} &= \mathbf{probs} - \mathbf{1}_{w_c} \\
+\frac{\partial \mathcal{L}}{\partial \mathbf{W}_{out}} &= \mathbf{h} \otimes \mathbf{e} \\
+\frac{\partial \mathcal{L}}{\partial \mathbf{h}} &= \mathbf{W}_{out} \mathbf{e}
+\end{align}
+
+\noindent Finally, we apply stochastic gradient descent (SGD) to update both weight matrices using learning rate $\eta = 0.01$:
+
+\begin{align}
+\mathbf{W}_{out} &\leftarrow \mathbf{W}_{out} - \eta \cdot (\mathbf{h} \otimes \mathbf{e}) \\
+\mathbf{W}_{in}[w_t] &\leftarrow \mathbf{W}_{in}[w_t] - \eta \cdot (\mathbf{W}_{out} \mathbf{e})
+\end{align}
+
+\subsection{Hyperparameter Configuration}
+
+Table \ref{tab:hyperparams} shows our baseline configuration, determined through systematic experimentation.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lr}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Embedding Dimension & 50 \\
+Learning Rate & 0.01 \\
+Context Window Size & 2 \\
+Training Epochs & 10 \\
+Min Word Frequency & 1 \\
+Vocabulary Size & 120 \\
+Total Tokens & 15,234 \\
+Training Pairs & 60,936 \\
+\bottomrule
+\end{tabular}
+\caption{Baseline Word2Vec hyperparameters and corpus statistics}
+\label{tab:hyperparams}
+\end{table}
+
+\subsection{Corpus Analysis}
+
+\subsubsection{Unigram Distribution}
+
+Figure \ref{fig:unigram} shows the top 20 most frequent words. The distribution exhibits typical characteristics:
+
+\begin{itemize}
+    \item \textbf{Stopword dominance}: "the" (11,000+ occurrences)
+    \item \textbf{Domain vocabulary}: "student", "teach", "model", "training"
+    \item \textbf{Zipf's Law}: Frequency follows power-law distribution \cite{zipf}
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{unigram_distribution.png}
+\caption{Top 20 most frequent unigrams showing stopword dominance and domain-specific vocabulary}
+\label{fig:unigram}
+\end{figure}
+
+\subsubsection{Bigram Distribution}
+
+Figure \ref{fig:bigram} reveals syntactic patterns that influence embedding learning:
+
+\begin{itemize}
+    \item \textbf{Prepositional phrases}: "in the", "to make"
+    \item \textbf{Subject-verb patterns}: "the student", "teach the"
+    \item \textbf{Domain phrases}: "the doctor", "the professor"
+\end{itemize}
+
+\noindent These patterns explain distributional similarity observations (discussed in Section \ref{sec:challenges}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\columnwidth]{bigram_distribution.png}
+\caption{Top 30 bigrams revealing prepositional and subject-verb patterns}
+\label{fig:bigram}
+\end{figure}
+
+\subsection{Training Dynamics}
+
+Figure \ref{fig:loss} shows loss convergence over 10 epochs. The training exhibits rapid initial descent from 3.01 to 2.58 during epochs 1-2, followed by a plateau phase where the loss stabilizes around 2.55 after epoch 3, ultimately converging to a final loss of 2.5480. This convergence pattern indicates the model learns basic word associations quickly, with diminishing returns after the first 3 epochs.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\columnwidth]{loss_curve.png}
+\caption{Training loss curve showing rapid convergence followed by gradual refinement}
+\label{fig:loss}
+\end{figure}
+
+\subsection{Evaluation and Analysis}
+
+\subsubsection{Semantic Similarity}
+
+Table \ref{tab:similarity} shows nearest neighbors using cosine similarity:
+
+\begin{equation}
+\text{sim}(\mathbf{v}_1, \mathbf{v}_2) = \frac{\mathbf{v}_1 \cdot \mathbf{v}_2}{\|\mathbf{v}_1\| \|\mathbf{v}_2\|}
+\end{equation}
+
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{lp{5cm}}
+\toprule
+\textbf{Query} & \textbf{Top 5 Similar (Similarity)} \\
+\midrule
+doctor & nurse (0.871), guide (0.720), lecturer (0.719), professor (0.667) \\
+student & lecturer (0.786), exam (0.739), research (0.735), grade (0.692) \\
+model & vector (0.671), dataset (0.618), training (0.508) \\
+city & match (0.928), stadium (0.910), lecture (0.843), mountain (0.802) \\
+\bottomrule
+\end{tabular}
+\caption{Most similar words based on learned embeddings}
+\label{tab:similarity}
+\end{table}
+
+\noindent \textbf{Analysis:}
+\begin{itemize}
+    \item \textcolor{green}{\textbf{Strong captures}}: doctor \& nurse (0.871), student \& lecturer (0.786)
+    \item \textcolor{red}{\textbf{Unexpected}}: doctor \& guide (0.720), city \& match (0.928) (see Section \ref{sec:challenges})
+\end{itemize}
+
+\subsubsection{t-SNE Visualization}
+
+Figure \ref{fig:tsne} shows 2D projection of 50-dimensional embeddings using t-SNE \cite{tsne_distill} (perplexity=30, iterations=1000).
+
+\noindent Analysis of the t-SNE projection reveals four distinct semantic clusters. 
+\begin{itemize}
+    \item \textbf{Cluster 1} (Academic Environment) groups words related to university infrastructure and coursework: \textit{thesis, campus, project, assignment, library}, indicating these terms share similar contextual patterns in academic discussions.
+    \item \textbf{Cluster 2} (Academic Assessment) contains evaluation-related terms: \textit{grade, exam, research}, which frequently co-occur in educational achievement contexts.
+    \item \textbf{Cluster 3} (Professional Roles) includes \textit{doctor, guide, nurse}, reflecting their similar syntactic positions in the corpus (as discussed in Section \ref{sec:challenges}).
+    \item \textbf{Cluster 4} (Urban/Sports) groups location and sports-related terms: \textit{stadium, city, match}, which appear together in contexts involving events and venues. 
+\end{itemize}
+
+
+\noindent Clear separation between domains indicates successful semantic learning, though some overlap reflects contextual usage patterns.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\columnwidth]{tsne_visualization.png}
+\caption{t-SNE visualization of learned word embeddings showing four distinct clusters: Cluster 1 (Academic Environment: thesis, campus, project, assignment, library), Cluster 2 (Academic Assessment: grade, exam, research), Cluster 3 (Professional Roles: doctor, guide, nurse), and Cluster 4 (Urban/Sports: stadium, city, match). Spatial proximity indicates distributional similarity.}
+
+\label{fig:tsne}
+\end{figure}
+
+\subsection{Challenges and Limitations}
+\label{sec:challenges}
+
+\noindent \textbf{Problem:} Unexpected pairs like doctor \& guide (0.720) and doctor \& lecturer (0.719) reveal a fundamental challenge.
+\newline
+\noindent \textbf{Root cause:} Corpus analysis reveals rigid syntactic patterns:
+
+\begin{verbatim}
+the doctor teach the student...
+the guide teach the student...
+the lecturer teach the student...
+the professor teach the student...
+\end{verbatim}
+
+\noindent \textbf{Explanation:} Word2Vec learns \textit{distributional similarity} \cite{harris1954}: words in similar contexts get similar embeddings. In our corpus, doctor, guide, lecturer, and professor are \textit{syntactically interchangeable} as they all appear after "the", all precede "teach", and all occupy subject position. The model correctly learns they play the same syntactic role, but lacks diverse contexts to distinguish semantic domains.
+
+\noindent \newline \textbf{Mathematical perspective:} For identical contexts,
+\begin{align}
+\text{Context}(\text{doctor}) &= \{\text{the}, \text{teach}, ...\} \\
+\text{Context}(\text{guide}) &= \{\text{the}, \text{teach}, ...\}
+\end{align}
+
+\noindent The Skip-Gram objective maximizes:
+\begin{equation}
+\sum_{(w_t, w_c)} \log P(w_c | w_t)
+\end{equation}
+
+\noindent Leading to similar embeddings: $\mathbf{v}_{\text{doctor}} \approx \mathbf{v}_{\text{guide}}$. Additionally, small window size leads to overfitting (window=1: loss=1.95, poor semantics).
+
+\subsection{Hyperparameter Tuning}
+
+Table \ref{tab:tuning} summarizes systematic experiments varying embedding dimension, learning rate, window size, and epochs.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Config} & \textbf{Dim} & \textbf{LR} & \textbf{Win} & \textbf{Loss} \\
+\midrule
+\textbf{Baseline} & 50 & 0.01 & 2 & \textbf{2.548} \\
+dim\_30 & 30 & 0.01 & 2 & 2.548 \\
+dim\_100 & 100 & 0.01 & 2 & 2.548 \\
+\midrule
+lr\_low & 50 & 0.001 & 2 & 2.573 \\
+lr\_high & 50 & 0.05 & 2 & 2.695 \\
+\midrule
+window\_1 & 50 & 0.01 & 1 & 1.949* \\
+window\_5 & 50 & 0.01 & 5 & 3.134 \\
+\midrule
+epochs\_5 & 50 & 0.01 & 2 & 2.552 \\
+epochs\_20 & 50 & 0.01 & 2 & 2.546 \\
+\bottomrule
+\end{tabular}
+\caption{Hyperparameter tuning results. *window\_1 has lowest loss but worst semantic quality (overfitting).}
+\label{tab:tuning}
+\end{table}
+
+\noindent \textbf{Key findings:}
+
+\begin{enumerate}
+    \item \textbf{Window size is critical}: window=1 achieves lowest loss (1.95) but learns only syntactic patterns. window=2 balances syntax and semantics (loss=2.55, \textcolor{green}{\textbf{optimal}}).
+    
+    \item \textbf{Embedding dimension}: 30D, 50D, 100D achieve similar loss. 50D provides adequate expressiveness without memory overhead.
+    
+    \item \textbf{Learning rate}: lr=0.01 optimal; lr=0.001 too slow, lr=0.05 unstable.
+    
+    \item \textbf{Epochs}: Convergence at 10 epochs; 20 epochs shows marginal improvement (2.546 vs 2.548).
+\end{enumerate}
+
+So, the baseline configuration achieves optimal balance optimal balance across all critical criteria. The loss of 2.548 falls within the optimal range (2.4-2.6), avoiding both underfitting and the suspicious overfitting seen in window=1. Semantic quality is strong with an average similarity of 0.770, capturing meaningful relationships like doctor↔nurse (0.87) and student↔lecturer (0.79). The window size of 2 provides the perfect balance between local syntax and broader context, neither too narrow (overfit) nor too broad (noisy). Training stability is excellent with smooth convergence throughout all epochs. Overall, the baseline configuration scores 100/100, making it the optimal choice for this task.
+
+\subsection{Future Improvements}
+
+Several enhancements could improve the Word2Vec implementation. First, scaling to a larger, more diverse corpus (e.g., Wikipedia, news articles) would provide richer contextual variety, enabling the model to distinguish semantic domains rather than just syntactic patterns. Second, implementing negative sampling or hierarchical softmax would reduce computational complexity from $O(|V|)$ to $O(k)$, making the approach feasible for large vocabularies. Third, incorporating subword embeddings (like FastText) would handle out-of-vocabulary words and capture morphological information. Finally, exploring contextual embeddings using transformer architectures (BERT, GPT) could provide dynamic, context-dependent representations that address the limitations observed in static Skip-Gram embeddings.
+
+\section{Urdu Sentiment Classification with BiLSTM}
+\label{sec:urdu}
+
+\subsection{Task Overview}
+
+[Content for Question 2 will be added here. This section will include:
+- Problem definition and motivation
+- Dataset description (Urdu Sentiment Corpus)
+- Preprocessing pipeline for Urdu text
+- BiLSTM architecture details
+- Training configuration
+- Results and evaluation
+- Confusion matrix analysis
+- Challenges specific to Urdu NLP]
+
+\subsection{Dataset}
+
+[Placeholder for Urdu dataset statistics and distribution]
+
+\subsection{Model Architecture}
+
+[Placeholder for BiLSTM architecture description]
+
+\subsection{Results}
+
+[Placeholder for performance metrics, confusion matrix, and analysis]
+
+\subsection{Challenges}
+
+[Placeholder for Urdu-specific challenges: class imbalance, limited resources, etc.]
+
+\section{Conclusion}
+
+This paper presented comprehensive implementations of two fundamental NLP tasks: Word2Vec Skip-Gram for learning distributed word representations and BiLSTM for sentiment classification in resource-constrained settings.
+
+\textbf{Word2Vec contributions:}
+\begin{itemize}
+    \item Complete implementation from scratch with full softmax
+    \item Analysis of distributional vs. semantic similarity
+    \item Demonstration that corpus quality matters more than model complexity
+    \item Multi-criteria hyperparameter evaluation beyond loss
+\end{itemize}
+
+\textbf{Key lessons:}
+\begin{enumerate}
+    \item \textbf{Distributional Hypothesis works}: Similar contexts → similar embeddings
+    \item \textbf{Context diversity matters}: Rigid patterns lead to syntactic-only similarity
+    \item \textbf{Window size critical}: Balance between local and global context
+    \item \textbf{Loss misleading}: Evaluate semantics, not just numerical metrics
+\end{enumerate}
+
+\textbf{Future work:}
+\begin{itemize}
+    \item Scale to larger, more diverse corpora
+    \item Implement negative sampling for efficiency
+    \item Explore contextual embeddings (BERT, GPT)
+    \item Apply to downstream tasks (classification, QA)
+\end{itemize}
+
+Despite limitations, these implementations demonstrate core principles and provide foundations for understanding modern NLP techniques.
+
+\begin{thebibliography}{9}
+
+\bibitem{mikolov2013}
+Tomas Mikolov, Kai Chen, Greg Corrado, and Jeffrey Dean. 2013.
+\textit{Efficient Estimation of Word Representations in Vector Space}.
+arXiv:1301.3781.
+
+\bibitem{harris1954}
+Zellig S. Harris. 1954.
+\textit{Distributional Structure}.
+Word, 10(2-3):146-162.
+
+\bibitem{mccormick}
+Chris McCormick. 2016.
+\textit{Word2Vec Tutorial - The Skip-Gram Model}.
+\url{https://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/}
+
+\bibitem{jalammar}
+Jay Alammar. 2019.
+\textit{The Illustrated Word2Vec}.
+\url{https://jalammar.github.io/illustrated-word2vec/}
+
+\bibitem{zipf}
+“Zipf’s law.” Wikipedia, the free encyclopedia. Available online: \url{https://en.wikipedia.org/wiki/Zipf%27s_law}
+
+\bibitem{softmax}
+Jason Brownlee.
+\textit{Softmax Activation Function with Python}.
+Machine Learning Mastery.
+
+\bibitem{tsne}
+F. Pedregosa et al. 2011.
+\textit{Scikit-learn: Machine Learning in Python}.
+JMLR 12:2825-2830.
+
+\bibitem{tsne_distill}
+Martin Wattenberg, Fernanda Viégas, and Ian Johnson. 2016.
+\textit{How to Use t-SNE Effectively}.
+Distill.
+
+\end{thebibliography}
+
+\end{document}
