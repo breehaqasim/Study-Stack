@@ -1,0 +1,170 @@
+#September 14th, 2022 - Designing a calculator using functions
+
+#************************FIRST PROGRAM***************************************
+
+#Defining a void function called calculator that takes two arguments, a & b 
+#and performs the basic mathematical operations, including add, subtract,
+#multiply, getting quotient of division, getting remainder of division,
+#and exponential value. As this is a void function, it does NOT return anything
+#Instead, it only prints the outputs of all operations
+def calculator(a, b):
+    #calculates sum and prints it
+    c = a + b
+    print(c)
+    
+    #calculates difference and prints it
+    print(a - b)
+    
+    #calculates product and prints it
+    c = a * b
+    print(c)
+    
+    #calculates quotient from division and prints it
+    print(a // b)
+    
+    #calculates remainder from division and prints it
+    c = a % b
+    print(c)
+    
+    #calculates exponential value and prints it
+    c = a ** b
+    print(c)
+  
+#main function that takes two inputs from user and calls the calculator function with those 
+#inputs as arguments. As calculator is a void function, i.e. it is NOT returning any value,
+#then just call it with its name without assigning it anywhere  
+def main():
+    num1 = int(input())
+    num2 = int(input())
+    calculator(num1, num2)
+    
+#Language based command to tell the interpretter where to start executing the code
+if __name__ == "__main__":
+    main()
+
+
+#************************SECOND PROGRAM***************************************
+
+#Defining a fruitful function called calculator that takes three arguments, a, b & choice 
+#and performs the basic mathematical operations, including add, subtract,
+#multiply, getting quotient of division, getting remainder of division,
+#and exponential value, based on the choice value. 
+#If choice is 1 then perform addition
+#If choice is 2 then perform subtraction
+#If choice is 3 then perform multiplication
+#If choice is 4 then calculate quotient from division
+#If choice is 5 then calculate remainder from division
+#If choice is 6 then perform exponent operation
+#If choice is not between 1 to 6 then return an error message
+#As this is a fruitful function, it will need to return a result, and ONLY one output can
+#be returned at a time, so based on the choice, it can return the result of one of the
+#six operations specified above
+
+def calculator(a, b, choice):
+    if(choice == 1):
+        c = a + b
+        return c
+    elif(choice == 2):
+        return (a - b)
+    elif (choice == 3):
+        c = a * b
+        return c
+    elif(choice == 4):
+        c = a//b
+        return c
+    elif(choice == 5):
+        c = a % b
+        return c
+    elif(choice == 6):
+        c = a**b
+        return c
+    else:
+        return "Invalid choice!"
+        
+#main function that takes two inputs from user and calls the calculator function with those 
+#inputs as arguments. As calculator is a fruitful function, i.e. it is returning a value,
+#then it must be handled, either by assigning it to some variable and/or printing it directly 
+#Here I am assigning the result and then printing it later 
+def main():
+    num1 = int(input())
+    num2 = int(input())
+    ch1 = int(input())
+
+    result = calculator(num1, num2, ch1)
+    print(result) 
+   
+#Language based command to tell the interpretter where to start executing the code
+if __name__ == "__main__":
+    main()  
+
+        
+#************************THIRD PROGRAM***************************************
+
+#You may make the program more efficient and concise, by having just one return 
+#statement at the end. The rest of the logic stays the same as that of the previous
+#question
+
+def calculator(a, b, choice):
+    if(choice == 1):
+        c = a + b        
+    elif(choice == 2):
+        c = a - b
+    elif (choice == 3):
+        c = a * b
+    elif(choice == 4):
+        c = a//b
+    elif(choice == 5):
+        c = a % b
+    elif(choice == 6):
+        c = a**b
+    else:
+        c = "Invalid choice!"
+
+    return c
+        
+#main function that takes two inputs from user and calls the calculator function with those 
+#inputs as arguments. As calculator is a fruitful function, i.e. it is returning a value,
+#then it must be handled, either by assigning it to some variable and/or printing it directly 
+#Here I am printing it directly 
+def main():
+    num1 = int(input())
+    num2 = int(input())
+    ch1 = int(input())
+
+    print(calculator(num1, num2, ch1))
+   
+#Language based command to tell the interpretter where to start executing the code
+if __name__ == "__main__":
+    main()  
+
+
+
+#September 16th, 2022 - Helper Functions 
+
+#Define a helper function that is a void function, i.e. it does NOT return anything
+#It is called print_lyrics that takes no arguments, and simply prints two string statements
+def print_lyrics():
+    print("I'm a lumberjack, and I'm okay.")
+    print("I sleep all night and I work all day.")
+  
+#Define a function called repeat_lyrics that uses the helper function defined above
+#It is a void function, i.e. it does NOT return anything, and simply calls the helper
+#function twice  
+def repeat_lyrics():
+    print_lyrics()
+    print_lyrics()
+
+#Main function that calls the function needed to be executed, i.e. repeat_lyrics
+#and some other random tasks to show that this is where all the executable code
+#is defined and must be executed only from here
+def main():    
+    repeat_lyrics()
+    print("Hello World!")
+    a = 3
+    b = 2
+    c = a + b
+    print(c)
+    
+#Language based command to tell the interpretter where to start executing the code
+if __name__ == "__main__":
+    main()
